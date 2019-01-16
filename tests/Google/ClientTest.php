@@ -192,6 +192,8 @@ class Google_ClientTest extends BaseTest
 
   public function testPrepareService()
   {
+    $this->onlyGuzzle6();
+
     $client = new Google_Client();
     $client->setScopes(array("scope1", "scope2"));
     $scopes = $client->prepareScopes();
@@ -242,7 +244,6 @@ class Google_ClientTest extends BaseTest
         ->method('createRequest')
         ->will($this->returnValue($guzzle5Request));
     }
-
 
     $client->setHttpClient($http);
     $dr_service = new Google_Service_Drive($client);
@@ -341,7 +342,7 @@ class Google_ClientTest extends BaseTest
     $client = new Google_Client();
     $device =
     '{"installed":{"auth_uri":"https://accounts.google.com/o/oauth2/auth","client_secret"'.
-    ':"N0aHCBT1qX1VAcF5J1pJAn6S","token_uri":"https://accounts.google.com/o/oauth2/token",'.
+    ':"N0aHCBT1qX1VAcF5J1pJAn6S","token_uri":"https://oauth2.googleapis.com/token",'.
     '"client_email":"","redirect_uris":["urn:ietf:wg:oauth:2.0:oob","oob"],"client_x509_cert_url"'.
     ':"","client_id":"123456789.apps.googleusercontent.com","auth_provider_x509_cert_url":'.
     '"https://www.googleapis.com/oauth2/v1/certs"}}';
@@ -354,7 +355,7 @@ class Google_ClientTest extends BaseTest
     // Web config
     $client = new Google_Client();
     $web = '{"web":{"auth_uri":"https://accounts.google.com/o/oauth2/auth","client_secret"' .
-      ':"lpoubuib8bj-Fmke_YhhyHGgXc","token_uri":"https://accounts.google.com/o/oauth2/token"' .
+      ':"lpoubuib8bj-Fmke_YhhyHGgXc","token_uri":"https://oauth2.googleapis.com/token"' .
       ',"client_email":"123456789@developer.gserviceaccount.com","client_x509_cert_url":'.
       '"https://www.googleapis.com/robot/v1/metadata/x509/123456789@developer.gserviceaccount.com"'.
       ',"client_id":"123456789.apps.googleusercontent.com","auth_provider_x509_cert_url":'.
@@ -442,7 +443,14 @@ class Google_ClientTest extends BaseTest
     $postBody->expects($this->once())
       ->method('__toString')
       ->will($this->returnValue($token));
-    $response = $this->getMock('Psr\Http\Message\ResponseInterface');
+    if ($this->isGuzzle5()) {
+      $response = $this->getMock('GuzzleHttp\Message\ResponseInterface');
+      $response->expects($this->once())
+        ->method('getStatusCode')
+        ->will($this->returnValue(200));
+    } else {
+      $response = $this->getMock('Psr\Http\Message\ResponseInterface');
+    }
     $response->expects($this->once())
       ->method('getBody')
       ->will($this->returnValue($postBody));
@@ -479,7 +487,14 @@ class Google_ClientTest extends BaseTest
     $postBody->expects($this->once())
       ->method('__toString')
       ->will($this->returnValue($token));
-    $response = $this->getMock('Psr\Http\Message\ResponseInterface');
+    if ($this->isGuzzle5()) {
+      $response = $this->getMock('GuzzleHttp\Message\ResponseInterface');
+      $response->expects($this->once())
+        ->method('getStatusCode')
+        ->will($this->returnValue(200));
+    } else {
+      $response = $this->getMock('Psr\Http\Message\ResponseInterface');
+    }
     $response->expects($this->once())
       ->method('getBody')
       ->will($this->returnValue($postBody));
@@ -517,7 +532,14 @@ class Google_ClientTest extends BaseTest
     $postBody->expects($this->once())
       ->method('__toString')
       ->will($this->returnValue($token));
-    $response = $this->getMock('Psr\Http\Message\ResponseInterface');
+    if ($this->isGuzzle5()) {
+      $response = $this->getMock('GuzzleHttp\Message\ResponseInterface');
+      $response->expects($this->once())
+        ->method('getStatusCode')
+        ->will($this->returnValue(200));
+    } else {
+      $response = $this->getMock('Psr\Http\Message\ResponseInterface');
+    }
     $response->expects($this->once())
       ->method('getBody')
       ->will($this->returnValue($postBody));
